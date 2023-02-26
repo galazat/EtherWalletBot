@@ -8,10 +8,14 @@ import (
 )
 
 func (c *Commander) Default(inputMessage *tgbotapi.Message) {
-	ms := inputMessage.Text
-	log.Printf("INFO: [%s] %s, %v", inputMessage.From.UserName, inputMessage.Text, hex.EncodeToString([]byte(ms)))
+	if c.currentStage == "auth" {
+		c.Auth(inputMessage)
+	} else {
+		ms := inputMessage.Text
+		log.Printf("INFO: [%s] %s, %v", inputMessage.From.UserName, inputMessage.Text, hex.EncodeToString([]byte(ms)))
 
-	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, "Привет, лучше посмотри на список доступных команд /help")
+		msg := tgbotapi.NewMessage(inputMessage.Chat.ID, "Привет, лучше посмотри на список доступных команд /help")
 
-	c.bot.Send(msg)
+		c.bot.Send(msg)
+	}
 }

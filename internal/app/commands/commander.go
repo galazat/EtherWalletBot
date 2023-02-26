@@ -5,6 +5,8 @@ import (
 
 	"github.com/ethereum/go-ethereum/ethclient"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+
+	"github.com/galazat/EtherWalletBot/internal/service/blockchain"
 )
 
 type CommandData struct {
@@ -12,14 +14,18 @@ type CommandData struct {
 }
 
 type Commander struct {
-	bot    *tgbotapi.BotAPI
-	client *ethclient.Client
+	currentStage string
+	bot          *tgbotapi.BotAPI
+	client       *ethclient.Client
+	account      *blockchain.Account
 }
 
 func NewCommander(bot *tgbotapi.BotAPI, client *ethclient.Client) *Commander {
 	return &Commander{
-		bot:    bot,
-		client: client,
+		currentStage: "",
+		bot:          bot,
+		client:       client,
+		account:      blockchain.InitAccount(),
 	}
 }
 
@@ -46,14 +52,16 @@ func (c *Commander) HandleUpdate(update tgbotapi.Update) {
 
 func switchCommand(arg string, c *Commander, update tgbotapi.Update) {
 	switch arg {
-	case "help":
-		c.Help(update.Message)
+	case "auth":
+		c.Auth(update.Message)
 	case "list":
 		c.List(update.Message)
 	case "get":
 		c.Get(update.Message)
 	case "start":
 		c.Start(update.Message)
+	case "account":
+		c.Auth(update.Message)
 	default:
 		c.Default(update.Message)
 	}

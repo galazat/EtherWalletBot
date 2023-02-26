@@ -2,21 +2,20 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/galazat/EtherWalletBot/internal/app/commands"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/joho/godotenv"
+
+	"github.com/galazat/EtherWalletBot/internal/app/commands"
 )
 
 func main() {
 	godotenv.Load()
-	//token := os.Getenv("TOKEN")
+	token := os.Getenv("TOKEN")
 
-	// Del in prod
-	token1 := ""
-
-	bot, err := tgbotapi.NewBotAPI(token1)
+	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -32,6 +31,9 @@ func main() {
 	var client *ethclient.Client
 
 	commader := commands.NewCommander(bot, client)
+
+	// ctx := context.Background()
+	// deploy.Deploy(client, ctx)
 
 	for update := range updates {
 		commader.HandleUpdate(update)
