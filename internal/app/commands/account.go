@@ -23,10 +23,10 @@ func (c *Commander) Account(inputMessage *tgbotapi.Message) {
 			tgbotapi.NewInlineKeyboardButtonData("Список кандидатов", "list"),
 		),
 		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData("Проголосовать", "list"),
+			tgbotapi.NewInlineKeyboardButtonData("Проголосовать", "Vote"),
 		),
 		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData("Показать лидера", "list"),
+			tgbotapi.NewInlineKeyboardButtonData("Показать лидера", "get"),
 		),
 	)
 

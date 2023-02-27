@@ -61,7 +61,9 @@ func switchCommand(arg string, c *Commander, update tgbotapi.Update) {
 	case "start":
 		c.Start(update.Message)
 	case "account":
-		c.Auth(update.Message)
+		c.Account(update.Message)
+	case "vote":
+		c.Vote(update.Message)
 	default:
 		c.Default(update.Message)
 	}

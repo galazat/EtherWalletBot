@@ -34,7 +34,7 @@ contract VoteContract {
             }));
         }
 
-        totalCandidats = Candidats.length;
+        TotalCandidats = Candidats.length;
     }
 
 

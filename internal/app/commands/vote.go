@@ -13,8 +13,8 @@ import (
 	vote "github.com/galazat/EtherWalletBot/internal/vote"
 )
 
-func (c *Commander) List(inputMessage *tgbotapi.Message) {
-	outputMsgText := "Cписок кандидатов: \n\n"
+func (c *Commander) Vote(inputMessage *tgbotapi.Message) {
+	outputMsgText := "Голос зачтён! \n\n"
 
 	address := common.HexToAddress("0x3B93b909F99E453f91E32Ed448E0F7f3e600BE1E")
 	instance, err := vote.NewVote(address, c.client)
@@ -24,22 +24,22 @@ func (c *Commander) List(inputMessage *tgbotapi.Message) {
 
 	fmt.Println("contract is loaded")
 
-	totalCand, err := instance.TotalCandidats(nil)
+	arg := inputMessage.CommandArguments()
+	fmt.Printf("TEST: %+v", arg)
+	num, _ := strconv.Atoi(arg)
+	fmt.Println("TEST2: ", arg)
+	_, err = instance.Vote(nil, big.NewInt(int64(num)))
 	if err != nil {
 		log.Println(err)
 	}
+	fmt.Println("TEST3: ", arg)
 
-	cand, err := strconv.Atoi(totalCand.String())
-	for i := 0; i < cand; i++ {
-		version, err := instance.Candidats(nil, big.NewInt(int64(i)))
-		if err != nil {
-			log.Println(err)
-		}
-
-		fmt.Printf("Имя кандидата:\n%s\nКоличество голосов:\n%s\n\n", version.Name, version.VoteCount)
-		outputMsgText += fmt.Sprintf("Имя кандидата:\n%s\nКоличество голосов:\n%s\n\n", version.Name, version.VoteCount)
-
+	version2, err2 := instance.Candidats(nil, big.NewInt(int64(num)))
+	if err != nil {
+		log.Println(err2)
 	}
+
+	outputMsgText += fmt.Sprintf("Вы проголосовали за %s\n", version2.Name)
 
 	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, outputMsgText)
 

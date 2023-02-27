@@ -1,26 +1,40 @@
 package commands
 
 import (
-	// "github.com/galazat/go-telegram-bot/internal/service/currency"
+	"fmt"
+	"log"
+
+	//"github.com/galazat/go-telegram-bot/internal/service/currency"
+	"github.com/ethereum/go-ethereum/common"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+
+	vote "github.com/galazat/EtherWalletBot/internal/vote"
 )
 
 func (c *Commander) Get(inputMessage *tgbotapi.Message) {
-	//args := inputMessage.CommandArguments()
-	outputMsgText := "-"
+	outputMsgText := "Лидер голосования: \n\n"
 
-	// log.Println("TESTING\n\n\n\n\n")
-	// curr := currency.TodayCurrensies.Get(string(args))
-	// if curr != nil {
-	// 	outputMsgText = "sorry, can't find currency \xF0\x9F\x98\xA5"
-	// 	return
-	// } else {
-	// 	outputMsgText = fmt.Sprintf("\n    %d %s  -  %s RUB ", curr.Nominal, curr.CharCode, curr.Value)
-	// }
+	address := common.HexToAddress("0x3B93b909F99E453f91E32Ed448E0F7f3e600BE1E")
+	instance, err := vote.NewVote(address, c.client)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	msg := tgbotapi.NewMessage(
-		inputMessage.Chat.ID,
-		outputMsgText,
+	fmt.Println("contract is loaded")
+
+	version, err := instance.WinnerName(nil)
+	if err != nil {
+		log.Println(err)
+	}
+
+	outputMsgText += fmt.Sprintf("Имя кандидата: %s", version)
+
+	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, outputMsgText)
+
+	msg.ReplyMarkup = tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("Назад", "account"),
+		),
 	)
 
 	c.bot.Send(msg)
